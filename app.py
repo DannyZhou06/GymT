@@ -18,22 +18,18 @@ from wtforms import validators
 from itsdangerous.url_safe import URLSafeTimedSerializer as Serializer
 
 # Import the database, models, and forms
-from modeldb import db, User, Attendance
+from models import db, User, Attendance
 from forms import LoginForm, UserForm, ChangePasswordForm, RequestResetForm, ResetPasswordForm
 
 # --- App Configuration ---
 
 app = Flask(__name__)
-# It's important to set a strong, secret key in a real application, often from an environment variable
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'a-very-secret-and-secure-key-for-development')
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=10)
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-# For Render, data will be stored in a persistent disk location
-data_dir = os.path.join(basedir, 'data')
-if not os.path.exists(data_dir):
-    os.makedirs(data_dir)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(data_dir, 'gym_tracker.db')
+# **CHANGE:** Use the DATABASE_URL from Render's environment, with a local fallback
+# This makes the app connect to your Neon database when deployed.
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///instance/gym_tracker.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # --- Initialize Extensions ---
@@ -308,7 +304,7 @@ def add_user():
     form.trainer_id.choices = [(t.id, t.full_name) for t in trainers]
     form.trainer_id.choices.insert(0, (0, 'None'))
     form.password.validators.insert(0, validators.DataRequired())
-
+    
     if form.validate_on_submit():
         if User.query.filter_by(username=form.username.data).first():
             flash('Username already exists.', 'error')
@@ -316,7 +312,7 @@ def add_user():
         if User.query.filter_by(email=form.email.data).first():
             flash('Email address already exists.', 'error')
             return render_template('user_form.html', form=form, title="Add New User")
-
+        
         new_user = User(
             username=form.username.data,
             email=form.email.data,
@@ -334,7 +330,7 @@ def add_user():
         db.session.commit()
         flash(f'User {new_user.full_name} created successfully.', 'success')
         return redirect(url_for('admin_dashboard'))
-
+    
     return render_template('user_form.html', form=form, title="Add New User")
 
 @app.route('/admin/user/edit/<int:user_id>', methods=['GET', 'POST'])
