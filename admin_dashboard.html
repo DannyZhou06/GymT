@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-gray-100 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <h1 class="text-xl font-bold text-indigo-600">Gym Tracker - Admin</h1>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="text-sm text-gray-500 mr-4">
+                        Welcome, <span class="font-medium text-gray-900">{{ current_user.full_name }}</span>
+                    </div>
+                    <a href="{{ url_for('logout') }}"
+                        class="text-sm font-medium text-gray-500 hover:text-gray-700">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Heading -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <h1 class="text-lg leading-6 font-semibold text-gray-900">User Management</h1>
+            <div class="flex items-center space-x-3">
+                <a href="{{ url_for('download_excel_report') }}"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700">
+                    Export Attendance (Excel)
+                </a>
+                <a href="{{ url_for('add_user') }}"
+                    class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                    Add New User
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div
+                class="mb-6 rounded-md {{ 'bg-green-100 text-green-800' if category == 'success' else 'bg-red-100 text-red-800' }} p-4">
+                <p>{{ message }}</p>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- Members Table -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Members</h2>
+                <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Name</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Status</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Assigned Trainer</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Date Joined</th>
+                                <th scope="col" class="relative px-6 py-3"><span class="sr-only">Edit</span></th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for member in members %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{
+                                    member.full_name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ 'bg-green-100 text-green-800' if member.is_active else 'bg-red-100 text-red-800' }}">
+                                        {{ 'Active' if member.is_active else 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{
+                                    member.trainer.full_name if member.trainer else 'None' }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{
+                                    member.created_at.strftime('%B %d, %Y') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="{{ url_for('edit_user', user_id=member.id) }}"
+                                        class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">No members found.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Trainers Table -->
+            <div>
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Trainers</h2>
+                <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Name</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Status</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Clients</th>
+                                <th scope="col"
+                                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Date Joined</th>
+                                <th scope="col" class="relative px-6 py-3"><span class="sr-only">Edit</span></th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for trainer in trainers %}
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{
+                                    trainer.full_name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <span
+                                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ 'bg-green-100 text-green-800' if trainer.is_active else 'bg-red-100 text-red-800' }}">
+                                        {{ 'Active' if trainer.is_active else 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{
+                                    trainer.assigned_members.count() }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{
+                                    trainer.created_at.strftime('%B %d, %Y') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="{{ url_for('edit_user', user_id=trainer.id) }}"
+                                        class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="px-6 py-4 text-center text-sm text-gray-500">No trainers found.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

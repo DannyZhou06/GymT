@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="relative flex min-h-full flex-col justify-center overflow-hidden bg-gray-50 py-6 sm:py-12">
+    <div
+        class="relative bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:max-w-lg sm:rounded-lg sm:px-10">
+        <div class="mx-auto max-w-md text-center">
+            <h1 class="text-3xl font-bold tracking-tight text-indigo-600 sm:text-4xl">Welcome to Gym Tracker</h1>
+            <p class="mt-4 text-lg leading-8 text-gray-600">Your personal platform for tracking fitness goals and
+                attendance.</p>
+            <div class="mt-10 flex items-center justify-center gap-x-6">
+                <a href="{{ url_for('login') }}"
+                    class="rounded-md bg-indigo-600 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    Member / Trainer Sign In
+                </a>
+                <a href="{{ url_for('login') }}"
+                    class="rounded-md bg-gray-700 px-6 py-3 text-base font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-700">
+                    Admin Sign In
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

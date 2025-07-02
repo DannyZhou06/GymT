@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="bg-gray-100 min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <h1 class="text-xl font-bold text-indigo-600">Gym Tracker - Admin</h1>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <a href="{{ url_for('logout') }}"
+                        class="text-sm font-medium text-gray-500 hover:text-gray-700">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="py-10">
+        <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white shadow-lg sm:rounded-lg">
+                <div class="py-8 px-4 sm:px-10">
+                    <h2 class="text-2xl font-bold tracking-tight text-gray-900 mb-6">{{ title }}</h2>
+                    <form class="space-y-6" method="POST">
+                        {{ form.hidden_tag() }}
+
+                        <!-- Full Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">{{ form.full_name.label }}</label>
+                            <div class="mt-1">
+                                {{ form.full_name(class="block w-full rounded-md border-gray-300 shadow-sm
+                                focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm") }}
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">{{ form.email.label }}</label>
+                            <div class="mt-1">
+                                {{ form.email(class="block w-full rounded-md border-gray-300 shadow-sm
+                                focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm") }}
+                            </div>
+                        </div>
+
+                        <!-- Role -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">{{ form.role.label }}</label>
+                            <div class="mt-1">
+                                {{ form.role(class="block w-full rounded-md border-gray-300 shadow-sm
+                                focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm", id="role") }}
+                            </div>
+                        </div>
+
+                        <!-- Trainer (only show if role is member) -->
+                        {% if form.trainer_id %}
+                        <div id="trainer-field" style="display: none;">
+                            <label class="block text-sm font-medium text-gray-700">{{ form.trainer_id.label }}</label>
+                            <div class="mt-1">
+                                {{ form.trainer_id(class="block w-full rounded-md border-gray-300 shadow-sm
+                                focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm") }}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- Password -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">{{ form.password.label }}</label>
+                            <div class="mt-1">
+                                {{ form.password(class="block w-full rounded-md border-gray-300 shadow-sm
+                                focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm") }}
+                            </div>
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">{{ form.confirm_password.label
+                                }}</label>
+                            <div class="mt-1">
+                                {{ form.confirm_password(class="block w-full rounded-md border-gray-300 shadow-sm
+                                focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm") }}
+                            </div>
+                        </div>
+
+                        <!-- Is Active Checkbox -->
+                        <div class="relative flex items-start">
+                            <div class="flex h-5 items-center">
+                                {{ form.is_active(class="h-4 w-4 rounded border-gray-300 text-indigo-600
+                                focus:ring-indigo-500") }}
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="is_active" class="font-medium text-gray-700">{{ form.is_active.label
+                                    }}</label>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-4">
+                            {{ form.submit(class="inline-flex justify-center rounded-md border border-transparent
+                            bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700") }}
+                            <a href="{{ url_for('dashboard') }}"
+                                class="text-sm font-medium text-gray-600 hover:text-gray-900">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const roleSelect = document.getElementById('role');
+        const trainerField = document.getElementById('trainer-field');
+
+        if (roleSelect && trainerField) {
+            function toggleTrainerField() {
+                if (roleSelect.value === 'member') {
+                    trainerField.style.display = 'block';
+                } else {
+                    trainerField.style.display = 'none';
+                }
+            }
+            toggleTrainerField();
+            roleSelect.addEventListener('change', toggleTrainerField);
+        }
+    });
+</script>
+{% endblock %}
