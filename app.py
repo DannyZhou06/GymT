@@ -18,7 +18,7 @@ from wtforms import validators
 from itsdangerous.url_safe import URLSafeTimedSerializer as Serializer
 
 # Import the database, models, and forms
-from models import db, User, Attendance
+from modeldb import db, User, Attendance
 from forms import LoginForm, UserForm, ChangePasswordForm, RequestResetForm, ResetPasswordForm
 
 # --- App Configuration ---
